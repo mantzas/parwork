@@ -1,6 +1,7 @@
 package parwork
 
 import (
+	"errors"
 	"fmt"
 	"runtime"
 	"sync"
@@ -31,10 +32,16 @@ type Processor struct {
 
 // New returns a new work processor with default worker, queue length and reporter.
 // Optional definitions are available through the processor options variadic arguments.
+// In case of a
 // Workers: Number of CPU
 // Queue: Number of CPU * 100
 // Reporter: output to stdout
-func New(g WorkGenerator, options ...ProcessorOption) *Processor {
+func New(g WorkGenerator, options ...ProcessorOption) (*Processor, error) {
+
+	if g == nil {
+		return nil, errors.New("generator is nil")
+	}
+
 	p := &Processor{
 		workers:   runtime.NumCPU(),
 		queue:     runtime.NumCPU() * 100,
@@ -45,33 +52,48 @@ func New(g WorkGenerator, options ...ProcessorOption) *Processor {
 	}
 
 	for _, opt := range options {
-		opt(p)
+		err := opt(p)
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	return p
+	return p, nil
 }
 
 // ProcessorOption defines a option for the processor
-type ProcessorOption func(*Processor)
+type ProcessorOption func(*Processor) error
 
 // Workers defines a processor option for the workers
 func Workers(count int) ProcessorOption {
-	return func(p *Processor) {
+	return func(p *Processor) error {
+		if count <= 0 {
+			return errors.New("worker count must be positive")
+		}
 		p.workers = count
+		return nil
 	}
 }
 
 // Queue defines a processor option for the queue length
 func Queue(length int) ProcessorOption {
-	return func(p *Processor) {
+	return func(p *Processor) error {
+		if length <= 0 {
+			return errors.New("queue length must be positive")
+		}
 		p.queue = length
+		return nil
 	}
 }
 
 // Reporter defines a processor option for the work reporter
 func Reporter(reporter WorkReporter) ProcessorOption {
-	return func(p *Processor) {
+	return func(p *Processor) error {
+		if reporter == nil {
+			return errors.New("reporter is nil")
+		}
 		p.reporter = reporter
+		return nil
 	}
 }
 
