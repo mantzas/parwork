@@ -1,15 +1,17 @@
-package parwork
+package processor
 
 import (
 	"reflect"
 	"sync"
 	"testing"
+
+	"github.com/mantzas/parwork"
 )
 
 func TestNew(t *testing.T) {
 	type args struct {
-		g       WorkGenerator
-		options []ProcessorOption
+		g       parwork.WorkGenerator
+		options []Option
 	}
 	tests := []struct {
 		name    string
@@ -50,8 +52,8 @@ func TestProcessor_Process(t *testing.T) {
 func TestProcessor_startWorkers(t *testing.T) {
 	type args struct {
 		wg   *sync.WaitGroup
-		q    <-chan Work
-		repQ chan<- Work
+		q    <-chan parwork.Work
+		repQ chan<- parwork.Work
 	}
 	tests := []struct {
 		name string
@@ -70,7 +72,7 @@ func TestProcessor_startWorkers(t *testing.T) {
 func TestProcessor_startReporter(t *testing.T) {
 	type args struct {
 		wg *sync.WaitGroup
-		q  <-chan Work
+		q  <-chan parwork.Work
 	}
 	tests := []struct {
 		name string
@@ -88,7 +90,7 @@ func TestProcessor_startReporter(t *testing.T) {
 
 func TestProcessor_startGenerator(t *testing.T) {
 	type args struct {
-		q chan<- Work
+		q chan<- parwork.Work
 	}
 	tests := []struct {
 		name string

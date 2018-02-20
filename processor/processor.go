@@ -1,18 +1,20 @@
-package parwork
+package processor
 
 import (
 	"errors"
 	"fmt"
 	"runtime"
 	"sync"
+
+	"github.com/mantzas/parwork"
 )
 
 // Processor handles the generation, distribution and reporting or work
 type Processor struct {
 	workers   int
 	queue     int
-	generator WorkGenerator
-	reporter  WorkReporter
+	generator parwork.WorkGenerator
+	reporter  parwork.WorkReporter
 }
 
 // New returns a new work processor with default worker, queue length and reporter.
@@ -21,7 +23,7 @@ type Processor struct {
 // Workers: Number of CPU
 // Queue: Number of CPU * 100
 // Reporter: output to stdout
-func New(g WorkGenerator, options ...ProcessorOption) (*Processor, error) {
+func New(g parwork.WorkGenerator, options ...Option) (*Processor, error) {
 
 	if g == nil {
 		return nil, errors.New("generator is nil")
@@ -31,7 +33,7 @@ func New(g WorkGenerator, options ...ProcessorOption) (*Processor, error) {
 		workers:   runtime.NumCPU(),
 		queue:     runtime.NumCPU() * 100,
 		generator: g,
-		reporter: func(w Work) {
+		reporter: func(w parwork.Work) {
 			fmt.Println(w)
 		},
 	}
@@ -48,8 +50,8 @@ func New(g WorkGenerator, options ...ProcessorOption) (*Processor, error) {
 
 // Process begins the parallel processing of work
 func (p Processor) Process() {
-	workerQ := make(chan Work, p.queue)
-	reporterQ := make(chan Work, p.queue)
+	workerQ := make(chan parwork.Work, p.queue)
+	reporterQ := make(chan parwork.Work, p.queue)
 	wgWorker := sync.WaitGroup{}
 	wgCollector := sync.WaitGroup{}
 
@@ -63,7 +65,7 @@ func (p Processor) Process() {
 	wgCollector.Wait()
 }
 
-func (p Processor) startWorkers(wg *sync.WaitGroup, q <-chan Work, repQ chan<- Work) {
+func (p Processor) startWorkers(wg *sync.WaitGroup, q <-chan parwork.Work, repQ chan<- parwork.Work) {
 	wCount := 0
 	for wCount < p.workers {
 		wg.Add(1)
@@ -78,7 +80,7 @@ func (p Processor) startWorkers(wg *sync.WaitGroup, q <-chan Work, repQ chan<- W
 	}
 }
 
-func (p Processor) startReporter(wg *sync.WaitGroup, q <-chan Work) {
+func (p Processor) startReporter(wg *sync.WaitGroup, q <-chan parwork.Work) {
 	wg.Add(1)
 	go func() {
 		for work := range q {
@@ -88,7 +90,7 @@ func (p Processor) startReporter(wg *sync.WaitGroup, q <-chan Work) {
 	}()
 }
 
-func (p Processor) startGenerator(q chan<- Work) {
+func (p Processor) startGenerator(q chan<- parwork.Work) {
 	for {
 		work := p.generator()
 		if work == nil {

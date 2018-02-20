@@ -1,6 +1,12 @@
-package parwork
+package processor
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/mantzas/parwork"
+
+	"github.com/mantzas/parwork/mocks"
+)
 
 func TestWorkers(t *testing.T) {
 	tests := []struct {
@@ -15,7 +21,7 @@ func TestWorkers(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			p, err := New(testGenerator, Workers(tt.count))
+			p, err := New(mocks.Generator, Workers(tt.count))
 
 			if tt.wantError && err == nil {
 				t.Errorf("Worker error = %v, wantErr %v", err, tt.wantError)
@@ -43,7 +49,7 @@ func TestQueue(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			p, err := New(testGenerator, Queue(tt.length))
+			p, err := New(mocks.Generator, Queue(tt.length))
 
 			if tt.wantError && err == nil {
 				t.Errorf("Queue error = %v, wantErr %v", err, tt.wantError)
@@ -59,21 +65,18 @@ func TestQueue(t *testing.T) {
 }
 
 func TestReporter(t *testing.T) {
-	type args struct {
-		reporter WorkReporter
-	}
 	tests := []struct {
 		name      string
-		reporter  WorkReporter
+		reporter  parwork.WorkReporter
 		wantError bool
 	}{
-		{"success", testReporter, false},
+		{"success", mocks.Reporter, false},
 		{"fails with nil reporter", nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			p, err := New(testGenerator, Reporter(tt.reporter))
+			p, err := New(mocks.Generator, Reporter(tt.reporter))
 
 			if tt.wantError && err == nil {
 				t.Errorf("reporter error = %v, wantErr %v", err, tt.wantError)
