@@ -1,6 +1,8 @@
 package mocks
 
-import "github.com/mantzas/parwork"
+import (
+	"github.com/mantzas/parwork"
+)
 
 // MockWork definition
 type MockWork struct{}

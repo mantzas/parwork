@@ -1,35 +1,41 @@
 package processor
 
 import (
-	"reflect"
 	"sync"
 	"testing"
 
 	"github.com/mantzas/parwork"
+	"github.com/mantzas/parwork/mocks"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
+	assert := assert.New(t)
 	type args struct {
 		g       parwork.WorkGenerator
 		options []Option
 	}
+	p, _ := New(mocks.Generator)
 	tests := []struct {
 		name    string
 		args    args
 		want    *Processor
 		wantErr bool
 	}{
-		// TODO: Add test cases.
+		{"failure due to nil generator", args{nil, nil}, nil, true},
+		{"failure due to error option", args{mocks.Generator, []Option{Reporter(nil)}}, nil, true},
+		{"success", args{mocks.Generator, nil}, p, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := New(tt.args.g, tt.args.options...)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("New() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("New() = %v, want %v", got, tt.want)
+			if tt.wantErr {
+				assert.Error(err, "New() error = %v, wantErr %v", err, tt.wantErr)
+			} else {
+				assert.Equal(got.workers, tt.want.workers)
+				assert.Equal(got.queue, tt.want.queue)
+				assert.NotNil(got.generator)
+				assert.NotNil(got.reporter)
 			}
 		})
 	}
