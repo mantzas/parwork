@@ -7,29 +7,29 @@ import (
 )
 
 func TestMockWork_ID(t *testing.T) {
-	req := require.New(t)
+	require := require.New(t)
 	m := MockWork{}
-	req.Equal("1", m.ID())
+	require.Equal("1", m.ID())
 }
 
 func TestMockWork_Do(t *testing.T) {
-	req := require.New(t)
+	require := require.New(t)
 	m := MockWork{}
-	req.NotPanics(m.Do)
+	require.NotPanics(m.Do)
 }
 
 func TestMockWork_GetError(t *testing.T) {
-	req := require.New(t)
+	require := require.New(t)
 	m := MockWork{}
-	req.NoError(m.GetError())
+	require.NoError(m.GetError())
 }
 
 func TestGenerator(t *testing.T) {
-	req := require.New(t)
-	req.NotNil(Generator())
+	require := require.New(t)
+	require.NotNil(Generator())
 }
 
 func TestReporter(t *testing.T) {
-	req := require.New(t)
-	req.NotPanics(func() { Reporter(MockWork{}) })
+	require := require.New(t)
+	require.NotPanics(func() { Reporter(MockWork{}) })
 }

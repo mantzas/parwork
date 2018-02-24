@@ -4,11 +4,13 @@ import (
 	"testing"
 
 	"github.com/mantzas/parwork"
+	"github.com/stretchr/testify/require"
 
 	"github.com/mantzas/parwork/mocks"
 )
 
 func TestWorkers(t *testing.T) {
+	require := require.New(t)
 	tests := []struct {
 		name      string
 		count     int
@@ -22,21 +24,17 @@ func TestWorkers(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			p, err := New(mocks.Generator, Workers(tt.count))
-
-			if tt.wantError && err == nil {
-				t.Errorf("Worker error = %v, wantErr %v", err, tt.wantError)
-			}
-
-			if !tt.wantError {
-				if p.workers != tt.want {
-					t.Errorf("workers = %v, want %v", p.workers, tt.want)
-				}
+			if tt.wantError {
+				require.NotNil(err, "Worker error = %v, wantErr %v", err, tt.wantError)
+			} else {
+				require.Equal(p.workers, tt.want, "workers = %v, want %v", p.workers, tt.want)
 			}
 		})
 	}
 }
 
 func TestQueue(t *testing.T) {
+	require := require.New(t)
 	tests := []struct {
 		name      string
 		length    int
@@ -50,21 +48,17 @@ func TestQueue(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			p, err := New(mocks.Generator, Queue(tt.length))
-
-			if tt.wantError && err == nil {
-				t.Errorf("Queue error = %v, wantErr %v", err, tt.wantError)
-			}
-
-			if !tt.wantError {
-				if p.queue != tt.want {
-					t.Errorf("queue length = %v, want %v", p.workers, tt.want)
-				}
+			if tt.wantError {
+				require.NotNil(err, "Queue error = %v, wantErr %v", err, tt.wantError)
+			} else {
+				require.NotEqual(p.workers, tt.want, "queue length = %v, want %v", p.workers, tt.want)
 			}
 		})
 	}
 }
 
 func TestReporter(t *testing.T) {
+	require := require.New(t)
 	tests := []struct {
 		name      string
 		reporter  parwork.WorkReporter
@@ -76,16 +70,11 @@ func TestReporter(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			p, err := New(mocks.Generator, Reporter(tt.reporter))
-
-			if tt.wantError && err == nil {
-				t.Errorf("reporter error = %v, wantErr %v", err, tt.wantError)
-			}
-
-			if !tt.wantError {
-				if p.reporter == nil {
-					t.Error("reporter is nil but wanted not nil")
-				}
+			_, err := New(mocks.Generator, Reporter(tt.reporter))
+			if tt.wantError {
+				require.NotNil(err, "reporter error = %v, wantErr %v", err, tt.wantError)
+			} else {
+				require.Nil(nil, "reporter is nil but wanted not nil")
 			}
 		})
 	}
