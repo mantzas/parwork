@@ -51,3 +51,10 @@ func (fc *testCollector) Collect(w parwork.Work) {
 
 	fc.results = append(fc.results, w.Result().(int))
 }
+
+func generator() parwork.Work {
+	return &testWork{}
+}
+
+func reporter(w parwork.Work) {
+}

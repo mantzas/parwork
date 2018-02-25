@@ -7,13 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func generator() parwork.Work {
-	return &testWork{}
-}
-
-func reporter(w parwork.Work) {
-}
-
 func TestWorkers(t *testing.T) {
 	assert := assert.New(t)
 	tests := []struct {
