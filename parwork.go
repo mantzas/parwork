@@ -5,11 +5,12 @@ package parwork
 type Work interface {
 	Do()
 	GetError() error
+	Result() interface{}
 }
 
 // WorkGenerator defines a function that generates work.
 // Every time the function is called it will return work or nil which signals the end of the work generation.
 type WorkGenerator func() Work
 
-// WorkReporter defines a function that handles the reporting of a completed work.
-type WorkReporter func(Work)
+// WorkCollector defines a function that handles the collection of a completed work.
+type WorkCollector func(Work)

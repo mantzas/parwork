@@ -7,14 +7,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-type testWork struct{}
-
-func (w testWork) Do() {}
-
-func (w testWork) GetError() error { return nil }
-
 func generator() parwork.Work {
-	return testWork{}
+	return &testWork{}
 }
 
 func reporter(w parwork.Work) {
@@ -72,7 +66,7 @@ func TestReporter(t *testing.T) {
 	assert := assert.New(t)
 	tests := []struct {
 		name      string
-		reporter  parwork.WorkReporter
+		collector parwork.WorkCollector
 		wantError bool
 	}{
 		{"success", reporter, false},
@@ -80,7 +74,7 @@ func TestReporter(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			_, err := New(generator, Reporter(tt.reporter))
+			_, err := New(generator, Collector(tt.collector))
 			if tt.wantError {
 				assert.NotNil(err, "reporter error = %v, wantErr %v", err, tt.wantError)
 			} else {

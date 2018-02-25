@@ -31,8 +31,8 @@ func Queue(length int) Option {
 	}
 }
 
-// Reporter defines a processor option for the work reporter
-func Reporter(reporter parwork.WorkReporter) Option {
+// Collector defines a processor option for the work collector
+func Collector(reporter parwork.WorkCollector) Option {
 	return func(p *Processor) error {
 		if reporter == nil {
 			return errors.New("reporter is nil")

@@ -14,7 +14,7 @@ type Processor struct {
 	workers   int
 	queue     int
 	generator parwork.WorkGenerator
-	reporter  parwork.WorkReporter
+	reporter  parwork.WorkCollector
 }
 
 // New returns a new work processor with default worker, queue length and reporter.
