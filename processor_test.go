@@ -1,16 +1,15 @@
-package processor
+package parwork
 
 import (
 	"testing"
 
-	"github.com/mantzas/parwork"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNew(t *testing.T) {
 	assert := assert.New(t)
 	type args struct {
-		g       parwork.WorkGenerator
+		g       WorkGenerator
 		options []Option
 	}
 	p, _ := New(generator)
@@ -65,4 +64,54 @@ func BenchmarkProcessor_Process(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		p.Process()
 	}
+}
+
+type testWork struct {
+	err      error
+	previous int
+	current  int
+	result   int
+}
+
+func (w *testWork) Do() {
+
+	w.result = w.previous + w.current
+}
+
+func (w *testWork) GetError() error { return w.err }
+
+func (w *testWork) Result() interface{} { return w.current }
+
+type testWorkGenerator struct {
+	current int
+	max     int
+}
+
+func (twg *testWorkGenerator) Generate() Work {
+
+	if twg.current > twg.max {
+		return nil
+	}
+
+	var w testWork
+	if twg.current == 0 {
+		w.previous = 0
+		w.current = 0
+	} else {
+		w.previous = twg.current - 1
+		w.current = twg.current
+	}
+
+	twg.current++
+
+	return &w
+}
+
+type testCollector struct {
+	results []int
+}
+
+func (fc *testCollector) Collect(w Work) {
+
+	fc.results = append(fc.results, w.Result().(int))
 }

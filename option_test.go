@@ -1,9 +1,8 @@
-package processor
+package parwork
 
 import (
 	"testing"
 
-	"github.com/mantzas/parwork"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -59,7 +58,7 @@ func TestReporter(t *testing.T) {
 	assert := assert.New(t)
 	tests := []struct {
 		name      string
-		collector parwork.WorkCollector
+		collector WorkCollector
 		wantError bool
 	}{
 		{"success", reporter, false},
@@ -75,4 +74,11 @@ func TestReporter(t *testing.T) {
 			}
 		})
 	}
+}
+
+func generator() Work {
+	return &testWork{}
+}
+
+func reporter(w Work) {
 }

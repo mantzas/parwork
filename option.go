@@ -1,9 +1,7 @@
-package processor
+package parwork
 
 import (
 	"errors"
-
-	"github.com/mantzas/parwork"
 )
 
 // Option defines a option for the processor
@@ -32,7 +30,7 @@ func Queue(length int) Option {
 }
 
 // Collector defines a processor option for the work collector
-func Collector(reporter parwork.WorkCollector) Option {
+func Collector(reporter WorkCollector) Option {
 	return func(p *Processor) error {
 		if reporter == nil {
 			return errors.New("reporter is nil")
