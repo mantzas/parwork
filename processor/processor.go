@@ -50,29 +50,29 @@ func New(g parwork.WorkGenerator, options ...Option) (*Processor, error) {
 
 // Process begins the parallel processing of work
 func (p Processor) Process() {
-	workerQ := make(chan parwork.Work, p.queue)
-	reporterQ := make(chan parwork.Work, p.queue)
-	wgWorker := sync.WaitGroup{}
-	wgCollector := sync.WaitGroup{}
+	pending := make(chan parwork.Work, p.queue)
+	done := make(chan parwork.Work, p.queue)
+	workers := sync.WaitGroup{}
+	collector := sync.WaitGroup{}
 
-	p.startWorkers(&wgWorker, workerQ, reporterQ)
-	p.startReporter(&wgCollector, reporterQ)
-	p.startGenerator(workerQ)
+	p.bootstrapWorkers(&workers, pending, done)
+	p.bootstrapReporter(&collector, done)
+	p.generateWork(pending)
 
-	close(workerQ)
-	wgWorker.Wait()
-	close(reporterQ)
-	wgCollector.Wait()
+	close(pending)
+	workers.Wait()
+	close(done)
+	collector.Wait()
 }
 
-func (p Processor) startWorkers(wg *sync.WaitGroup, q <-chan parwork.Work, repQ chan<- parwork.Work) {
+func (p Processor) bootstrapWorkers(wg *sync.WaitGroup, pending <-chan parwork.Work, done chan<- parwork.Work) {
 	wCount := 0
 	for wCount < p.workers {
 		wg.Add(1)
 		go func() {
-			for work := range q {
+			for work := range pending {
 				work.Do()
-				repQ <- work
+				done <- work
 			}
 			wg.Done()
 		}()
@@ -80,23 +80,23 @@ func (p Processor) startWorkers(wg *sync.WaitGroup, q <-chan parwork.Work, repQ 
 	}
 }
 
-func (p Processor) startReporter(wg *sync.WaitGroup, q <-chan parwork.Work) {
+func (p Processor) bootstrapReporter(wg *sync.WaitGroup, done <-chan parwork.Work) {
 	wg.Add(1)
 	go func() {
-		for work := range q {
+		for work := range done {
 			p.reporter(work)
 		}
 		wg.Done()
 	}()
 }
 
-func (p Processor) startGenerator(q chan<- parwork.Work) {
+func (p Processor) generateWork(pending chan<- parwork.Work) {
 	for {
 		work := p.generator()
 		if work == nil {
 			break
 		} else {
-			q <- work
+			pending <- work
 		}
 	}
 }

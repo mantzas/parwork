@@ -70,7 +70,7 @@ func TestProcessor_startWorkers(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.p.startWorkers(tt.args.wg, tt.args.q, tt.args.repQ)
+			tt.p.bootstrapWorkers(tt.args.wg, tt.args.q, tt.args.repQ)
 		})
 	}
 }
@@ -89,7 +89,7 @@ func TestProcessor_startReporter(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.p.startReporter(tt.args.wg, tt.args.q)
+			tt.p.bootstrapReporter(tt.args.wg, tt.args.q)
 		})
 	}
 }
@@ -107,7 +107,7 @@ func TestProcessor_startGenerator(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			tt.p.startGenerator(tt.args.q)
+			tt.p.generateWork(tt.args.q)
 		})
 	}
 }
