@@ -101,3 +101,18 @@ func TestProcessor_Process(t *testing.T) {
 	assert.NotPanics(p.Process)
 	assert.Len(col.results, max+1)
 }
+
+func BenchmarkProcessor_Process(b *testing.B) {
+
+	max := 1000
+	gen := testWorkGenerator{max: max}
+	col := testCollector{}
+
+	p, _ := New(gen.Generate, Collector(col.Collect))
+	b.ResetTimer()
+	b.ReportAllocs()
+
+	for i := 0; i < b.N; i++ {
+		p.Process()
+	}
+}
