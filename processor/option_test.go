@@ -4,13 +4,24 @@ import (
 	"testing"
 
 	"github.com/mantzas/parwork"
-	"github.com/stretchr/testify/require"
-
-	"github.com/mantzas/parwork/mocks"
+	"github.com/stretchr/testify/assert"
 )
 
+type testWork struct{}
+
+func (w testWork) Do() {}
+
+func (w testWork) GetError() error { return nil }
+
+func generator() parwork.Work {
+	return testWork{}
+}
+
+func reporter(w parwork.Work) {
+}
+
 func TestWorkers(t *testing.T) {
-	require := require.New(t)
+	assert := assert.New(t)
 	tests := []struct {
 		name      string
 		count     int
@@ -23,18 +34,18 @@ func TestWorkers(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			p, err := New(mocks.Generator, Workers(tt.count))
+			p, err := New(generator, Workers(tt.count))
 			if tt.wantError {
-				require.NotNil(err, "Worker error = %v, wantErr %v", err, tt.wantError)
+				assert.NotNil(err, "Worker error = %v, wantErr %v", err, tt.wantError)
 			} else {
-				require.Equal(p.workers, tt.want, "workers = %v, want %v", p.workers, tt.want)
+				assert.Equal(p.workers, tt.want, "workers = %v, want %v", p.workers, tt.want)
 			}
 		})
 	}
 }
 
 func TestQueue(t *testing.T) {
-	require := require.New(t)
+	assert := assert.New(t)
 	tests := []struct {
 		name      string
 		length    int
@@ -47,34 +58,33 @@ func TestQueue(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			p, err := New(mocks.Generator, Queue(tt.length))
+			p, err := New(generator, Queue(tt.length))
 			if tt.wantError {
-				require.NotNil(err, "Queue error = %v, wantErr %v", err, tt.wantError)
+				assert.NotNil(err, "Queue error = %v, wantErr %v", err, tt.wantError)
 			} else {
-				require.NotEqual(p.workers, tt.want, "queue length = %v, want %v", p.workers, tt.want)
+				assert.NotEqual(p.workers, tt.want, "queue length = %v, want %v", p.workers, tt.want)
 			}
 		})
 	}
 }
 
 func TestReporter(t *testing.T) {
-	require := require.New(t)
+	assert := assert.New(t)
 	tests := []struct {
 		name      string
 		reporter  parwork.WorkReporter
 		wantError bool
 	}{
-		{"success", mocks.Reporter, false},
+		{"success", reporter, false},
 		{"fails with nil reporter", nil, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-
-			_, err := New(mocks.Generator, Reporter(tt.reporter))
+			_, err := New(generator, Reporter(tt.reporter))
 			if tt.wantError {
-				require.NotNil(err, "reporter error = %v, wantErr %v", err, tt.wantError)
+				assert.NotNil(err, "reporter error = %v, wantErr %v", err, tt.wantError)
 			} else {
-				require.Nil(nil, "reporter is nil but wanted not nil")
+				assert.Nil(nil, "reporter is nil but wanted not nil")
 			}
 		})
 	}

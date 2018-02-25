@@ -3,7 +3,6 @@ package parwork
 // Work define the interface that each work item has to implement in order to be processed.
 // This implementation follows the command pattern.
 type Work interface {
-	ID() string
 	Do()
 	GetError() error
 }

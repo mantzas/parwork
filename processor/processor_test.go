@@ -1,11 +1,9 @@
 package processor
 
 import (
-	"sync"
 	"testing"
 
 	"github.com/mantzas/parwork"
-	"github.com/mantzas/parwork/mocks"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,7 +13,7 @@ func TestNew(t *testing.T) {
 		g       parwork.WorkGenerator
 		options []Option
 	}
-	p, _ := New(mocks.Generator)
+	p, _ := New(generator)
 	tests := []struct {
 		name    string
 		args    args
@@ -23,8 +21,8 @@ func TestNew(t *testing.T) {
 		wantErr bool
 	}{
 		{"failure due to nil generator", args{nil, nil}, nil, true},
-		{"failure due to error option", args{mocks.Generator, []Option{Reporter(nil)}}, nil, true},
-		{"success", args{mocks.Generator, nil}, p, false},
+		{"failure due to error option", args{generator, []Option{Reporter(nil)}}, nil, true},
+		{"success", args{generator, nil}, p, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -41,73 +39,11 @@ func TestNew(t *testing.T) {
 	}
 }
 
-func TestProcessor_Process(t *testing.T) {
-	tests := []struct {
-		name string
-		p    Processor
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tt.p.Process()
-		})
-	}
-}
+// func TestProcessor_Process(t *testing.T) {
+// 	assert := assert.New(t)
 
-func TestProcessor_startWorkers(t *testing.T) {
-	type args struct {
-		wg   *sync.WaitGroup
-		q    <-chan parwork.Work
-		repQ chan<- parwork.Work
-	}
-	tests := []struct {
-		name string
-		p    Processor
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tt.p.bootstrapWorkers(tt.args.wg, tt.args.q, tt.args.repQ)
-		})
-	}
-}
+// 	p, err := New()
 
-func TestProcessor_startReporter(t *testing.T) {
-	type args struct {
-		wg *sync.WaitGroup
-		q  <-chan parwork.Work
-	}
-	tests := []struct {
-		name string
-		p    Processor
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tt.p.bootstrapReporter(tt.args.wg, tt.args.q)
-		})
-	}
-}
-
-func TestProcessor_startGenerator(t *testing.T) {
-	type args struct {
-		q chan<- parwork.Work
-	}
-	tests := []struct {
-		name string
-		p    Processor
-		args args
-	}{
-		// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			tt.p.generateWork(tt.args.q)
-		})
-	}
-}
+// 	assert.NoError(err)
+// 	assert.NotPanics(p.Process)
+// }
