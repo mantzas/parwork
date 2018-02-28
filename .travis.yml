@@ -1,7 +1,7 @@
 sudo: required
 language: go
 go:
-  - 1.9.2
+  - 1.9.x
 before_script:
     - go get golang.org/x/tools/cmd/cover
     - go get github.com/mattn/goveralls
