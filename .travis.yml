@@ -1,0 +1,5 @@
+sudo: required
+language: go
+go:
+  - 1.10
+script: go test ./...
