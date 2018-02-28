@@ -1,5 +1,12 @@
 sudo: required
 language: go
 go:
-  - 1.10
-script: go test ./...
+  - 1.9.2
+before_script:
+    - go get golang.org/x/tools/cmd/cover
+    - go get github.com/mattn/goveralls
+    - chmod +x testcoverage.sh
+script: ./testcoverage.sh
+after_success:    
+    - bash <(curl -s https://codecov.io/bash)
+    - $HOME/gopath/bin/goveralls -covermode=atomic -coverprofile=coverage.txt -service=travis-ci
