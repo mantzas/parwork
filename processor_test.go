@@ -27,7 +27,7 @@ func TestNew(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := New(tt.args.g, tt.args.options...)
 			if tt.wantErr {
-				assert.Error(err, "New() error = %v, wantErr %v", err, tt.wantErr)
+				assert.Errorf(err, "New() error = %v, wantErr %v", err, tt.wantErr)
 			} else {
 				assert.Equal(got.workers, tt.want.workers)
 				assert.Equal(got.queue, tt.want.queue)
