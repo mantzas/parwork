@@ -4,7 +4,7 @@ package parwork
 // This implementation follows the command pattern.
 type Work interface {
 	Do()
-	GetError() error
+	Err() error
 	Result() interface{}
 }
 
