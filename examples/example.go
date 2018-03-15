@@ -26,7 +26,7 @@ func (gw *md5Work) Do() {
 }
 
 // GetError returns nil since the work does not fail
-func (gw *md5Work) GetError() error {
+func (gw *md5Work) Err() error {
 	return nil
 }
 

@@ -78,7 +78,7 @@ func (w *testWork) Do() {
 	w.result = w.previous + w.current
 }
 
-func (w *testWork) GetError() error { return w.err }
+func (w *testWork) Err() error { return w.err }
 
 func (w *testWork) Result() interface{} { return w.current }
 
