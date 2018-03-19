@@ -4,7 +4,7 @@ Parallel work processing package
 
 ## Description
 
-This package allows work to processed in parallel using a fan-out/fan-in pattern. The implementation relies on goroutines, channels and wait groups.
+This package allows work to processed in parallel using a fork-join pattern. The implementation relies on goroutines, channels and wait groups.
 
 The implementation allows the configuration of the processor by providing the degree of parallelism which defines how many goroutines will process work from the queues in parallel. By creating only a small number of goroutines, which defaults to the number of cores on the system, we avoid context switching instead of allowing a high number of goroutines to fight for processor resources.
 
