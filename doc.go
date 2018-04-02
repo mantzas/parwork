@@ -14,9 +14,9 @@ In order to use the package the user has only to provide the implementation of t
 Work interface
 
 	type Work interface {
-    		Do()
-    		GetError() error
-    		Result() interface{}
+		Do()
+		GetError() error
+		Result() interface{}
 	}
 
 The work interface defines a method "Do()" which contains all the processing logic of the work item.
