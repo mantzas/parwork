@@ -52,6 +52,6 @@ There are 3 example folder:
 
 Running the above gave us the following result (length=5)
 
-- linear, 7m57.544370159s
-- simple, 9m23.536487533s
-- parwork, 7m48.694807617s
+- linear, 7m57.544370159s, 8m16.05127878s
+- simple, 9m23.536487533s, 9m22.916237539s
+- parwork, 7m48.694807617s, 7m55.84453165s
