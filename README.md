@@ -43,3 +43,15 @@ The WorkCollector function takes as a argument a completed Work item. It can che
 ### Example
 
 For a example implementation please take a look in the examples folder of the repository. The example implements a brute force method of trying to find the MD5 hash of a string. This is just a example implementation to demonstrate the usage of the package. And it should not be misused to break secrets.
+
+There are 3 example folder:
+
+- linear, which processes each work in a linear fashion
+- simple, which processes each work in a separate go routine
+- parwork, which processes the work in a pipeline
+
+Running the above gave us the following result (length=5)
+
+- linear, 7m57.544370159s
+- simple, 9m23.536487533s
+- parwork, 7m48.694807617s

@@ -5,10 +5,8 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
-	"sync"
 	"time"
 
-	"github.com/mantzas/parwork"
 	"github.com/mantzas/parwork/examples"
 )
 
@@ -32,21 +30,13 @@ func main() {
 	g := examples.NewValueGenerator(l)
 	c := examples.HashCollector{Original: original, Hashed: hashed, Started: started}
 
-	wg := sync.WaitGroup{}
-
 	for {
 		wrk := g.Generate()
 		if wrk == nil {
 			break
 		}
-		wg.Add(1)
-		go func(w parwork.Work) {
-			defer wg.Done()
-			w.Do()
-			c.Collect(w)
-		}(wrk)
+		wrk.Do()
+		c.Collect(wrk)
 	}
-
-	wg.Wait()
 	fmt.Printf("every combination finished in %s\n", time.Since(started))
 }
